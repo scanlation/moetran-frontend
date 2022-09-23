@@ -29,8 +29,38 @@ const Index: FC<IndexProps> = () => {
           display: flex;
           justify-content: center;
           align-items: center;
-          img {
+          .Index__MsgContainer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 80%;
+            max-width: 1000px;
+          }
+          .Index__MascotBox {
+            width: 34%;
+            img {
+              max-height: 300px;
+            }
+          }
+          .Index__MsgBox {
+            width: 60%;
+            border-radius: 10px;
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, .3);
             max-height: 300px;
+            padding: 16px;
+
+            h2 {
+              text-align: center;
+              font-size: 32px;
+              font-weight: bolder;
+              line-height: 2em;
+            }
+
+            p.lead {
+              text-align: center;
+              font-size: 18px;
+              line-height: 2em;
+            }
           }
         }
         .Index__Footer {
@@ -52,7 +82,13 @@ const Index: FC<IndexProps> = () => {
       />
       <Header></Header>
       <div className="Index__Title">
-        <img src={brandJump} alt="Mascot" />
+        <div className="Index__MsgContainer">
+          <div className="Index__MascotBox"><img src={brandJump} alt="Mascot" /></div>
+          <div className="Index__MsgBox">
+            <h2>{ formatMessage({ id: "site.name" }) }</h2>
+            <p className="lead">{ formatMessage({ id: "site.slogan" }) }</p>
+          </div>
+        </div>
       </div>
       <div className="Index__Footer">{/* 备案号 */}</div>
     </div>

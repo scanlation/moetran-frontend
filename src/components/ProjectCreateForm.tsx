@@ -48,23 +48,23 @@ export const ProjectCreateForm: FC<ProjectCreateFormProps> = ({
     (state: AppState) => state.projectSet.currentProjectSet
   ) as UserProjectSet;
   const [disableSourceLanugageIDs, setDisableSourceLanugageIDs] = useState(
-    configs.default.project.targetLanguageIDs
+    configs.default.project.targetLanguageCodes
   );
   const [disableTargetLanugageIDs, setDisableTargetLanugageIDs] = useState([
-    configs.default.project.sourceLanugageID,
+    configs.default.project.sourceLanugageCode,
   ]);
   const [supportLabelplusTXT, setSupportLabelplusTXT] = useState(true);
   const [labelplusTXT, setLabelplusTXT] = useState<string>();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [formFinishValues, setFormFinishValues] = useState<any>();
+  // const [formFinishValues, setFormFinishValues] = useState<any>();
 
   const showFinishModal = (values: any) => {
-    setFormFinishValues(values);
-    setIsModalVisible(true);
+    handleFinish(values);
+    // setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    handleFinish(formFinishValues);
+    // handleFinish(formFinishValues);
     setIsModalVisible(false);
   };
 
@@ -137,8 +137,8 @@ export const ProjectCreateForm: FC<ProjectCreateFormProps> = ({
         initialValues={{
           intro: '',
           projectSet: currentProjectSet.id,
-          sourceLanguage: configs.default.project.sourceLanugageID,
-          targetLanguages: configs.default.project.targetLanguageIDs,
+          sourceLanguage: configs.default.project.sourceLanugageCode,
+          targetLanguages: configs.default.project.targetLanguageCodes,
         }}
         hideRequiredMark
         onValuesChange={(values) => {
