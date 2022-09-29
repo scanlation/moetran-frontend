@@ -95,7 +95,7 @@ export const Output: FC<OutputProps> = ({ index, output, className }) => {
           color={style.textColor}
           colorDisibled={style.textColorSecondary}
           type="link"
-          linkProps={{ href: output.link, target: '_blank' }}
+          linkProps={{ href: `${output.link}?download=${output.project.name}`, target: '_blank' }}
         >
           {output.link
             ? formatMessage({ id: 'output.download' })

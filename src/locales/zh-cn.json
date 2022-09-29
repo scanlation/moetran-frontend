@@ -12,7 +12,7 @@
   "auth.back": "返回",
   "auth.register": "注册",
   "auth.toLogin": "已有帐号？前往登录",
-  "site.name": "漫画译注器",
+  "site.name": "漫画译注器协作版",
   "site.slogan": "简单畅快的漫画翻译体验！",
   "form.required": "必填",
   "form.stringLen": "长度必须为 {len} 个字符",
