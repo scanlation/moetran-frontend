@@ -44,22 +44,30 @@ const Index: FC<IndexProps> = () => {
           }
           .Index__MsgBox {
             width: 60%;
-            border-radius: 10px;
-            box-shadow: 0 0 10px 0 rgba(0, 0, 0, .3);
-            max-height: 300px;
-            padding: 16px;
+            padding: 0 16px;
 
             h2 {
               text-align: center;
               font-size: 32px;
               font-weight: bolder;
               line-height: 2em;
+              margin: 0;
             }
 
             p.lead {
               text-align: center;
               font-size: 18px;
               line-height: 2em;
+              margin: 10px 0;
+              margin-top: -6px;
+            }
+
+            .msgBox {
+              border-radius: 10px;
+              box-shadow: 0 0 10px 0 rgba(0, 0, 0, .3);
+              max-height: 300px;
+              text-align: center;
+              overflow: auto;
             }
           }
         }
@@ -86,7 +94,10 @@ const Index: FC<IndexProps> = () => {
           <div className="Index__MascotBox"><img src={brandJump} alt="Mascot" /></div>
           <div className="Index__MsgBox">
             <h2>{ formatMessage({ id: "site.name" }) }</h2>
-            <p className="lead">{ formatMessage({ id: "site.slogan" }) }</p>
+            <p className="lead">{formatMessage({ id: "site.slogan" })}</p>
+            <div className="msgBox">
+              <p className="red">请注意，这个版本是删档测试版本。数据保存到2022年11月底！</p>
+            </div>
           </div>
         </div>
       </div>
