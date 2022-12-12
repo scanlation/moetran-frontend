@@ -2,6 +2,8 @@ import { css, Global } from '@emotion/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import About from './pages/About';
+import SiteLink from './pages/SiteLink'
 import Admin from './pages/Admin';
 import Dashboard from './pages/Dashboard';
 import ImageTranslator from './pages/ImageTranslator';
@@ -21,6 +23,8 @@ const App: React.FC = () => {
   // 公共的页面
   const publicPaths = [
     '/',
+    '/about',
+    '/link',
     '/login',
     '/register',
     '/reset-password',
@@ -128,6 +132,12 @@ const App: React.FC = () => {
           />
           <Route exact path="/">
             <Index />
+          </Route>
+          <Route path="/about">
+            <About />
+          </Route>
+          <Route path="/link">
+            <SiteLink />
           </Route>
           <Route path="/login">
             <Login />
