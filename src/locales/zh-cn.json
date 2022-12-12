@@ -14,6 +14,8 @@
   "auth.toLogin": "已有帐号？前往登录",
   "site.name": "漫画译注器协作版",
   "site.slogan": "简单畅快的漫画翻译体验！",
+  "site.about.title": "关于本项目",
+  "site.link.title": "相关项目链接",
   "form.required": "必填",
   "form.stringLen": "长度必须为 {len} 个字符",
   "auth.getEmailVCode": "获取邮件验证码",

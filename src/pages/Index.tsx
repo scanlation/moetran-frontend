@@ -1,6 +1,7 @@
 import { css, Global } from "@emotion/core";
 import React from "react";
 import { useIntl } from "react-intl";
+import { useHistory } from 'react-router';
 import { Header } from "../components";
 import brandJump from "../images/brand/mascot-jump1.png";
 import { FC } from "../interfaces";
@@ -15,6 +16,7 @@ interface IndexProps {}
 const Index: FC<IndexProps> = () => {
   const { formatMessage } = useIntl(); // i18n
   useTitle({ suffix: formatMessage({ id: "site.slogan" }) }); // 设置标题
+  const history = useHistory();
 
   return (
     <div
@@ -76,9 +78,14 @@ const Index: FC<IndexProps> = () => {
               li {
                 color: #7F7A7A;
                 cursor: pointer;
+
+                > a {
+                  color: #7F7A7A;
+                }
               }
               li:hover {
                 text-decoration: underline;
+                color: #FF657C;
               }
             }
 
@@ -142,16 +149,28 @@ const Index: FC<IndexProps> = () => {
             <h2>{ formatMessage({ id: "site.name" }) }</h2>
             <p className="lead">{formatMessage({ id: "site.slogan" })}</p>
             <div className="msgBox">
-              <p className="red"><Icon icon={["fas", "exclamation-triangle"]} /> 请注意，这个版本是删档测试版本。数据保存到2022年11月底！<Icon icon={["fas", "exclamation-triangle"]} /></p>
+              <p className="red"><Icon icon={["fas", "exclamation-triangle"]} /> 请注意，这个版本是删档测试版本。数据保存到2023年01月底！<Icon icon={["fas", "exclamation-triangle"]} /></p>
               <p>此版本使用中有出现问题，或者有建议想交流的，可以添加此项目 <Icon icon={["fab", "qq"]} /> 反馈专群 <code>451050931</code> 咨询。在萌翻的反馈群里也可以询问，但截图时请包含域名或者注明是自己搭建的“漫画译注器协作版”项目。</p>
-              <p>此项目的前后端均在<Icon icon={["fab", "github"]} /> Github 上开源，目前由于还没测试完成，使用的是 <code><Icon icon={["fas", "code-branch"]} /> dev</code> 分支更新。后期有稳定版本后会转到 <code><Icon icon={["fas", "code-branch"]} /> master</code> 分支上。由于整理代码时候调整了部分接口的参数，“漫画译注器协作版”的前后端分支只能互相搭配使用。<span className="red">不可搭配“萌翻”开源的原版前后端，会出现表单提交报错的情况！</span></p>
-              <p>后端项目：<a href="https://github.com/scanlation/moetran-backend"><code><Icon icon={["fab", "github"]} /> scanlation/moetran-backend</code></a></p>
+              <p>此项目的前后端均在<Icon icon={["fab", "github"]} /> Github 上开源，目前由于还没测试完成，使用的是 <code><Icon icon={["fas", "code-branch"]} /> dev</code> 分支更新。后期有稳定版本后会转到 <code><Icon icon={["fas", "code-branch"]} /> master</code> 分支上。</p>
+              <p>后端项目：<a href="https://github.com/scanlation/moetran-local-backend"><code><Icon icon={["fab", "github"]} /> scanlation/moetran-local-backend</code></a></p>
               <p>前端项目：<a href="https://github.com/scanlation/moetran-frontend"><code><Icon icon={["fab", "github"]} /> scanlation/moetran-frontend</code></a></p>
             </div>
             <ul className="links">
-              <li>使用/搭建帮助</li>
-              <li>相关项目链接</li>
-              <li>关于我们</li>
+              <li>
+                <a href="https://blog.moetran.com/?from=test-site" target="_blank" rel="noopener">使用/搭建帮助</a>
+              </li>
+              <li
+                onClick={() => {
+                  history.push('/link');
+                }}>
+                相关项目链接
+              </li>
+              <li
+                onClick={() => {
+                  history.push('/about');
+                }}>
+                关于本项目
+              </li>
             </ul>
           </div>
         </div>
