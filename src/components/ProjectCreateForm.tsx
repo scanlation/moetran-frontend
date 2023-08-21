@@ -56,15 +56,15 @@ export const ProjectCreateForm: FC<ProjectCreateFormProps> = ({
   const [supportLabelplusTXT, setSupportLabelplusTXT] = useState(true);
   const [labelplusTXT, setLabelplusTXT] = useState<string>();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [formFinishValues, setFormFinishValues] = useState<any>();
+  // const [formFinishValues, setFormFinishValues] = useState<any>();
 
   const showFinishModal = (values: any) => {
-    setFormFinishValues(values);
-    setIsModalVisible(true);
+    handleFinish(values);
+    // setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    handleFinish(formFinishValues);
+    // handleFinish(formFinishValues);
     setIsModalVisible(false);
   };
 
