@@ -1,9 +1,18 @@
 import { css } from '@emotion/core';
-import { Button, Pagination, Result, Table, Tag } from 'antd';
+import {
+  Button,
+  Pagination,
+  Popconfirm,
+  Result,
+  Table,
+  Tag,
+  message,
+} from 'antd';
+import { Button as CustomButton } from './Button';
 import classNames from 'classnames';
 import produce from 'immer';
 import qs from 'qs';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
@@ -15,6 +24,9 @@ import { FC, Team } from '../interfaces';
 import { AppState } from '../store';
 import style from '../style';
 import { toLowerCamelCase } from '../utils';
+import dayjs from 'dayjs';
+import { OUTPUT_STATUS, OUTPUT_TYPE } from '../constants/output';
+import { clickEffect } from '../utils/style';
 
 const { Column } = Table;
 
@@ -48,24 +60,65 @@ export const TeamInsightProjectList: FC<TeamInsightProjectListProps> = ({
     usersLoading?: boolean;
     usersPage?: number;
   }
-  const {
-    items,
-    setItems,
-    page,
-    setPage,
-    total,
-    limit,
-    status,
-    refresh,
-  } = usePagination<
-    APIInsightProjectWithPage,
-    Parameters<typeof apis.getTeamInsightProjects>[0]
-  >({
-    api: apis.getTeamInsightProjects,
-    apiParams: { teamID: team.id, params: { word: word } },
-    defaultPage,
-    defaultLimit: 10,
-  });
+  const { items, setItems, page, setPage, total, limit, status, refresh } =
+    usePagination<
+      APIInsightProjectWithPage,
+      Parameters<typeof apis.getTeamInsightProjects>[0]
+    >({
+      api: apis.getTeamInsightProjects,
+      apiParams: { teamID: team.id, params: { word: word } },
+      defaultPage,
+      defaultLimit: 10,
+    });
+  const [outputing, setOutputing] = useState(false);
+  const [outputingProjectID, setOutputingProjectID] = useState('');
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      refresh();
+    }, 30000);
+    return () => {
+      window.clearInterval(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const createTeamOutputs = ({ teamID }: { teamID: string }) => {
+    setOutputing(true);
+    apis
+      .createTeamOutput({
+        teamID,
+      })
+      .then((result) => {
+        message.success('导出任务创建成功，您可以关闭页面稍后前来下载。');
+        refresh();
+      })
+      .catch((error) => {
+        error.default();
+      })
+      .finally(() => {
+        setOutputing(false);
+      });
+  };
+
+  const createOutputs = ({ projectID }: { projectID: string }) => {
+    message.success('导出中，请稍后...');
+    setOutputing(true);
+    setOutputingProjectID(projectID);
+    apis
+      .createAllOutput({
+        projectID,
+      })
+      .then((result) => {
+        refresh();
+      })
+      .catch((error) => {
+        error.default();
+      })
+      .finally(() => {
+        setOutputing(false);
+      });
+  };
 
   const handleLoadMoreClick = ({
     project,
@@ -128,6 +181,17 @@ export const TeamInsightProjectList: FC<TeamInsightProjectListProps> = ({
         .TeamInsightProjectList__MoreProjectsTip {
           color: ${style.textColorSecondary};
         }
+        .TeamInsightProjectList__OutputTeamProjectButton {
+          height: 40px;
+          line-height: 40px;
+          text-align: center;
+          border-bottom: 1px solid ${style.borderColorLight};
+          ${clickEffect()};
+          .TeamInsightProjectList__OutputTeamProjectButtonIcon {
+            margin-right: 5px;
+            color: ${style.textColorSecondary};
+          }
+        }
       `}
     >
       {status !== 'failure' && (
@@ -139,6 +203,25 @@ export const TeamInsightProjectList: FC<TeamInsightProjectListProps> = ({
           }}
           placeholder={formatMessage({ id: 'site.projectName' })}
         />
+      )}
+      {status !== 'failure' && (
+        <Popconfirm
+          placement="bottom"
+          title={'确认批量开始导出团队的所有项目的 zip 吗？'}
+          onConfirm={() => createTeamOutputs({ teamID: team.id })}
+          okText="开始吧～"
+          cancelText="不了"
+        >
+          <div className="TeamInsightProjectList__OutputTeamProjectButton">
+            <Icon
+              icon="plus"
+              className="TeamInsightProjectList__OutputTeamProjectButtonIcon"
+            />
+            <span className="TeamInsightProjectList__OutputTeamProjectButtonText">
+              批量开始导出团队所有项目 zip
+            </span>
+          </div>
+        </Popconfirm>
       )}
       {status !== 'failure' && (
         <Table
@@ -154,12 +237,29 @@ export const TeamInsightProjectList: FC<TeamInsightProjectListProps> = ({
             width="30%"
             render={(text, record: APIInsightProjectWithPage, index) => {
               return (
-                <Link
-                  className="TeamInsightProjectList__Name"
-                  to={`/dashboard/teams/${team.id}/project-sets/${record.project.projectSet.id}/projects/${record.project.id}/setting/invitation`}
+                <div
+                  key={record.project.id}
+                  className="TeamInsightProjectList__Project"
                 >
-                  {record.project.name}
-                </Link>
+                  <Link
+                    className="TeamInsightProjectList__Name"
+                    to={`/dashboard/teams/${team.id}/project-sets/${record.project.projectSet.id}`}
+                  >
+                    {record.project.projectSet.default
+                      ? formatMessage({ id: 'projectSet.default' })
+                      : record.project.projectSet.name}
+                  </Link>{' '}
+                  <Icon
+                    icon="angle-right"
+                    className="TeamInsightProjectList__ProjectSetToProjectIcon"
+                  />{' '}
+                  <Link
+                    className="TeamInsightProjectList__Name"
+                    to={`/dashboard/teams/${team.id}/project-sets/${record.project.projectSet.id}/projects/${record.project.id}/setting/invitation`}
+                  >
+                    {record.project.name}
+                  </Link>
+                </div>
               );
             }}
           />
@@ -219,6 +319,60 @@ export const TeamInsightProjectList: FC<TeamInsightProjectListProps> = ({
                       </Button>
                     </div>
                   )}
+                </div>
+              );
+            }}
+          />
+          <Column
+            title={formatMessage({ id: 'site.output' })}
+            key="project"
+            width="30%"
+            render={(text, record: APIInsightProjectWithPage, index) => {
+              return (
+                <div
+                  key={record.project.id}
+                  className="TeamInsightProjectList__Project"
+                >
+                  <Button
+                    disabled={outputing}
+                    loading={
+                      outputing && outputingProjectID === record.project.id
+                    }
+                    onClick={() => {
+                      createOutputs({ projectID: record.project.id });
+                    }}
+                  >
+                    导出所有语言 zip
+                  </Button>
+                  {record.outputs.map((output) => (
+                    <div>
+                      <CustomButton
+                        className="TeamInsightProjectList__OutputDownloadButton"
+                        disibled={output.status === OUTPUT_STATUS.ERROR}
+                        loading={
+                          ![
+                            OUTPUT_STATUS.SUCCEEDED,
+                            OUTPUT_STATUS.ERROR,
+                          ].includes(output.status)
+                        }
+                        color={style.textColor}
+                        colorDisibled={style.textColorSecondary}
+                        type="link"
+                        linkProps={{ href: output.link, target: '_blank' }}
+                      >
+                        {output.link
+                          ? formatMessage({ id: 'output.download' })
+                          : output.statusDetails.find(
+                              (d) => d.id === output.status
+                            )?.name}{' '}
+                        {output.type === OUTPUT_TYPE.ONLY_TEXT ? 'txt' : 'zip'}
+                        {' - '}
+                        {dayjs.utc(output.createTime).local().format('lll')}
+                        {' - '}
+                        {output.target.language.i18nName}
+                      </CustomButton>
+                    </div>
+                  ))}
                 </div>
               );
             }}

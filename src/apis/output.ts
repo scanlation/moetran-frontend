@@ -66,7 +66,37 @@ const createOutput = ({
   });
 };
 
+const createAllOutput = ({
+  projectID,
+  configs,
+}: {
+  projectID: string;
+  configs?: AxiosRequestConfig;
+}) => {
+  return request<APIOutput[]>({
+    method: 'POST',
+    url: `/v1/projects/${projectID}/outputs`,
+    ...configs,
+  });
+};
+
+const createTeamOutput = ({
+  teamID,
+  configs,
+}: {
+  teamID: string;
+  configs?: AxiosRequestConfig;
+}) => {
+  return request<APIOutput[]>({
+    method: 'POST',
+    url: `/v1/teams/${teamID}/outputs`,
+    ...configs,
+  });
+};
+
 export default {
   getOutputs,
   createOutput,
+  createAllOutput,
+  createTeamOutput,
 };
